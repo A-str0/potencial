@@ -51,17 +51,48 @@ def get_songs_by_date(date, table):
                     result.append(song)
     return result
 
+
+def sort_songs_by_date(table):
+    new_table = table.copy()
+    while True:
+        cnt = 0
+        for i in range(len(table) - 1):
+            if new_table[i][3] > new_table[i + 1][3]:
+                new_table[i], new_table[i + 1] = new_table[i + 1], new_table[i]
+                cnt += 1
+        if cnt == 0: break
+    return new_table
+
+
+def print_top5(table):
+    songs_table = sort_songs_by_date(table)
+    for i in range(5):
+        print(f'№{i} {songs_table[i][2]}, {songs_table[i][1]}, {songs_table[i][3]}')
+
+
+def task1(songs_table):
+    fill_gaps('01.01.2002', songs_table)
+
+    res = get_songs_by_date('01.01.2002', songs_table)
+    for i in res:
+        print(f'{i[2]} - {i[1]} - {i[0]}')
+
+
+def task2(songs_table):
+    print_top5(songs_table)
+
+
 def main():
     f = open('songs.csv', encoding='UTF8')
 
     r = csv.reader(f, delimiter=';')
     songs_table = list(r)[1:]
 
-    fill_gaps('01.01.2002', songs_table)
+    print('Task 1')
+    task1(songs_table)
 
-    res = get_songs_by_date('01.01.2002', songs_table)
-    for i in res:
-        print(i)
+    print('Task 2')
+    task2(songs_table)
 
     f.close()
 

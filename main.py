@@ -53,6 +53,11 @@ def get_songs_by_date(date, table):
 
 
 def sort_songs_by_date(table):
+    '''
+    Сортирует таблицу по дате написания композиций
+    :param table: таблица для сортировки
+    :return: отсортированая таблица
+    '''
     new_table = table.copy()
     while True:
         cnt = 0
@@ -65,6 +70,11 @@ def sort_songs_by_date(table):
 
 
 def print_top5(table):
+    '''
+    Выводит топ 5 композиций по давности создания
+    :param table: таблица для поиска
+    :return:
+    '''
     songs_table = sort_songs_by_date(table)
     for i in range(5):
         print(f'№{i} {songs_table[i][2]}, {songs_table[i][1]}, {songs_table[i][3]}')
@@ -82,11 +92,60 @@ def task2(songs_table):
     print_top5(songs_table)
 
 
+def task3(songs_table):
+    artist = input('Введите имя артиста для поиска: ')
+    result = find_song_by_artist(artist, songs_table)
+    print(result)
+
+
+def task4(songs_table):
+    ls = split_rus_and_foreign(songs_table)
+
+    f1 = open('russian_artists.txt', 'r+', encoding='UTF8')
+    for i in ls[0]:
+        f1.write(i + '\n')
+    f1.close()
+
+    f2 = open('foreign_artists.txt', 'r+', encoding='UTF8')
+    for i in ls[1]:
+        f2.write(i + '\n')
+    f2.close()
+
+
 def find_song_by_artist(artist, table):
+    '''
+    Функция находит одну песню исполнителя
+    :param artist: имя артиста
+    :param table: таблица для поиска
+    :return: название песни если такая есть, иначе "К сожалению, ничего не удалось найти"
+    '''
+
     for song in table:
         if artist == song[1]:
             return f'У {artist} найдена песня: {song[2]}'
     return 'К сожалению, ничего не удалось найти'
+
+
+def split_rus_and_foreign(table):
+    rus_letters = 'йцукенгшщщзхъфывапролдджэячсмитьбю'
+
+    russian_artists = []
+    foreign_artists = []
+
+    for song in table:
+        is_rus = False
+
+        for l in song[1]:
+            if l in rus_letters:
+                is_rus = True
+                break
+
+        if is_rus:
+            russian_artists.append(song[1])
+        else:
+            foreign_artists.append(song[1])
+
+    return tuple([russian_artists, foreign_artists])
 
 
 def main():
@@ -95,21 +154,22 @@ def main():
     r = csv.reader(f, delimiter=';')
     songs_table = list(r)[1:]
 
-    print('Task 1')
-    task1(songs_table)
+    # print('Task 1')
+    # task1(songs_table)
 
-    print('Task 2')
-    task2(songs_table)
+    # print('Task 2')
+    # task2(songs_table)
 
-    print('Task 3')
-    print('Введите имя артиста для поиска:')
-    artist = input()
-    result = find_song_by_artist(artist, songs_table)
-    print(result)
+    # print('Task 3')
+    # artist = input('Введите имя артиста для поиска: ')
+    # result = find_song_by_artist(artist, songs_table)
+    # print(result)
+
+    print('Task 4')
+    task4(songs_table)
 
     f.close()
 
 
 if __name__ == '__main__':
     main()
-

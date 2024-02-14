@@ -69,49 +69,6 @@ def sort_songs_by_date(table):
     return new_table
 
 
-def print_top5(table):
-    '''
-    Выводит топ 5 композиций по давности создания
-    :param table: таблица для поиска
-    :return:
-    '''
-    songs_table = sort_songs_by_date(table)
-    for i in range(5):
-        print(f'№{i} {songs_table[i][2]}, {songs_table[i][1]}, {songs_table[i][3]}')
-
-
-def task1(songs_table):
-    fill_gaps('01.01.2002', songs_table)
-
-    res = get_songs_by_date('01.01.2002', songs_table)
-    for i in res:
-        print(f'{i[2]} - {i[1]} - {i[0]}')
-
-
-def task2(songs_table):
-    print_top5(songs_table)
-
-
-def task3(songs_table):
-    artist = input('Введите имя артиста для поиска: ')
-    result = find_song_by_artist(artist, songs_table)
-    print(result)
-
-
-def task4(songs_table):
-    ls = split_rus_and_foreign(songs_table)
-
-    f1 = open('russian_artists.txt', 'r+', encoding='UTF8')
-    for i in ls[0]:
-        f1.write(i + '\n')
-    f1.close()
-
-    f2 = open('foreign_artists.txt', 'r+', encoding='UTF8')
-    for i in ls[1]:
-        f2.write(i + '\n')
-    f2.close()
-
-
 def find_song_by_artist(artist, table):
     '''
     Функция находит одну песню исполнителя
@@ -126,7 +83,24 @@ def find_song_by_artist(artist, table):
     return 'К сожалению, ничего не удалось найти'
 
 
+def print_top5(table):
+    '''
+    Выводит топ 5 композиций по давности создания
+    :param table: таблица для поиска
+    :return:
+    '''
+    songs_table = sort_songs_by_date(table)
+    for i in range(5):
+        print(f'№{i} {songs_table[i][2]}, {songs_table[i][1]}, {songs_table[i][3]}')
+
+
 def split_rus_and_foreign(table):
+    '''
+    Функция разделяет всех иполнителей из таблицы на русских и иностранных
+    :param table: таблица для разделения
+    :return: возвращает кортеж, содержащий списки русских и иностранных исполнителей
+    '''
+
     rus_letters = 'йцукенгшщщзхъфывапролдджэячсмитьбю'
 
     russian_artists = []
@@ -148,27 +122,116 @@ def split_rus_and_foreign(table):
     return tuple([russian_artists, foreign_artists])
 
 
+def task1(songs_table):
+    '''
+    Функция для проверки задачи 1
+    :param songs_table: исходная таблица
+    :return: None
+    '''
+    fill_gaps('01.01.2002', songs_table)
+
+    res = get_songs_by_date('01.01.2002', songs_table)
+    for i in res:
+        print(f'{i[2]} - {i[1]} - {i[0]}')
+
+
+def task2(songs_table):
+    '''
+    Функция для проверки задачи 2
+     :param songs_table: исходная таблица
+    :return: None
+    '''
+    print_top5(songs_table)
+
+
+def task3(songs_table):
+    '''
+    Функция для проверки задачи 3
+    :param songs_table: исходная таблица
+    :return: None
+    '''
+    artist = input('Введите имя артиста для поиска: ')
+    result = find_song_by_artist(artist, songs_table)
+    print(result)
+
+
+def task4(songs_table):
+    '''
+    Функция для проверки задачи 4
+    :param songs_table: исходная таблица
+    :return: None
+    '''
+    ls = split_rus_and_foreign(songs_table)
+
+    f1 = open('russian_artists.txt', 'r+', encoding='UTF8')
+    for i in ls[0]:
+        f1.write(i + '\n')
+    f1.close()
+
+    f2 = open('foreign_artists.txt', 'r+', encoding='UTF8')
+    for i in ls[1]:
+        f2.write(i + '\n')
+    f2.close()
+
+    print('files created')
+
+
+def task5(songs_table):
+    '''
+    Функция для проверки задачи 5
+    :param songs_table: исходная таблица
+    :return: None
+    '''
+
+    checked_songs = set()
+
+    artist = dict()
+
+    f = open('popuarity.csv', 'r+', encoding='UTF8')
+
+    w = csv.writer(f)
+    w.writerow(['artist_name', 'songs_count'])
+
+    for song in songs_table:
+        if song[2] not in checked_songs:
+            if song[1] not in artist.keys():
+                artist[song[1]] = 1
+            else:
+                artist[song[1]] += 1
+            checked_songs.add(song[2])
+
+    rows = []
+    for a in artist:
+        rows.append(tuple([a, str(artist[a])]))
+    w.writerows(rows)
+
+
+
+    f.close()
+
+
 def main():
     f = open('songs.csv', encoding='UTF8')
 
     r = csv.reader(f, delimiter=';')
     songs_table = list(r)[1:]
 
-    # print('Task 1')
-    # task1(songs_table)
+    f.close()
 
-    # print('Task 2')
-    # task2(songs_table)
+    print('\nTask 1')
+    task1(songs_table)
 
-    # print('Task 3')
-    # artist = input('Введите имя артиста для поиска: ')
-    # result = find_song_by_artist(artist, songs_table)
-    # print(result)
+    print('\nTask 2')
+    task2(songs_table)
 
-    print('Task 4')
+    print('\nTask 3')
+    task3(songs_table)
+
+    print('\nTask 4')
     task4(songs_table)
 
-    f.close()
+    print('\nTask 5')
+    task5(songs_table)
 
 
 if __name__ == '__main__':

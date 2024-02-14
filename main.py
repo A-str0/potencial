@@ -82,6 +82,13 @@ def task2(songs_table):
     print_top5(songs_table)
 
 
+def find_song_by_artist(artist, table):
+    for song in table:
+        if artist == song[1]:
+            return f'У {artist} найдена песня: {song[2]}'
+    return 'К сожалению, ничего не удалось найти'
+
+
 def main():
     f = open('songs.csv', encoding='UTF8')
 
@@ -93,6 +100,12 @@ def main():
 
     print('Task 2')
     task2(songs_table)
+
+    print('Task 3')
+    print('Введите имя артиста для поиска:')
+    artist = input()
+    result = find_song_by_artist(artist, songs_table)
+    print(result)
 
     f.close()
 
